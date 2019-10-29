@@ -1,6 +1,6 @@
 var bb, cc;
 var horcrux = {};
-var washUver = '46.2';
+var washUver = '46.3';
 var washUtag = '\
 <span style="color:#3a81ba;">W<span style="font-size:80%;">ASH</span>U</span> \
 <span style="color:#ff9900;">E<span style="font-size:80%;">PI</span></span>\
@@ -19899,7 +19899,7 @@ function track_click(event) {
         if (result == null) {
             countstr += 'No data'
         } else {
-            countstr += 'Count: '+result.score;
+            countstr += 'Value: '+result.score;
         }
         countstr += '</div>'
     

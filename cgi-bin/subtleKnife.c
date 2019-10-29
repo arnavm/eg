@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <search.h>
 #include <string.h>
+#include <errno.h>
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include <limits.h>
@@ -1565,10 +1566,11 @@ struct callingCard *sl=NULL, *tail=NULL, *cc;
 ti_iter_t iter=ti_queryi(fin, chridx, begin, end);
 const char *row;
 char delim[]="\t";
-char *tmpstr, *tok;
+char *tmpstr, *tok, *null;
 int len;
 int count = 0;
 long l;
+double d;
 boolean haveInvalid=FALSE;
 if (SQUAWK) fprintf(stderr,"About to parse calling card lines\n");
 while((row=ti_read(fin, iter, &len)) != 0)
@@ -1580,7 +1582,7 @@ while((row=ti_read(fin, iter, &len)) != 0)
 		exit(0);
 		}
 	cc=malloc(sizeof(struct callingCard));
-	// We expect to encounter values of chr, start, stop, and count
+	// We expect to encounter values of chr, start, stop, and value
 	// Not necessarily strand and barcode
 	cc->strand = 0;
 	cc->barcode = 0;
@@ -1618,18 +1620,19 @@ while((row=ti_read(fin, iter, &len)) != 0)
 		} else
 			cc->stop = l;
 	}
-	// read count
+	// value
 	tok = strtok(NULL, delim);
 	if (tok == NULL) {
 		haveInvalid = TRUE;
 		continue;
 	} else {
-		l = atol(tok);
-		if (l == -1) {
+		errno = 0;
+                d = strtod(tok, &null);
+		if (errno != 0) {
 			haveInvalid = TRUE;
 			continue;
 		} else
-			cc->value = l;
+			cc->value = d;
 	}
 	// strand, if present
 	tok = strtok(NULL, delim);
